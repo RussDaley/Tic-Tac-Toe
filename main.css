@@ -1,0 +1,29 @@
+#board {
+  padding: 3px;
+  width: 360px;
+  height: 360px;
+  background-color: green;
+  margin: 0 auto; }
+  #board .box {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    padding: 9px;
+    float: left;
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat; }
+  #board .box:hover {
+    background-color: rgba(255, 255, 255, 0.3); }
+  #board .box:nth-child(3n+4) {
+    clear: both; }
+
+.red {
+  /*background-color: red;*/
+  background-image: url("imageX.png"); }
+
+.blue {
+  /*background-color: blue;*/
+  background-image: url("imageO.png"); }
+
+/*# sourceMappingURL=main.css.map */

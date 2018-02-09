@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tic Tac Toe</title>
+	<link rel="stylesheet" type="text/css" href="main.css">
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+	<script type="text/javascript">
+	
+		var turn = 0;
+		var winningCombinations;
+		var painted;
+		var content;
+
+
+		window.onload=function(){
+		    painted = new Array();
+		    content = new Array();
+		    winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+		// create arrays with empty values
+		    for(var l = 0; l <= 8; l++){
+			    painted[l] = false;
+			    content[l]='';
+		    }
+		}
+
+
+
+		function boxClicked(boxNumber) {
+		    theBox = "box"+boxNumber;
+		    document.getElementById(theBox);
+
+
+			if (painted[boxNumber-1] ==false) { //this condition tells us that the board isn't occupied, we should draw on it
+	        	if(turn%2==0) {
+	        		content[boxNumber-1] = 'X';
+	        		$('#' + theBox).addClass("red");
+	        		console.log(content);
+	        		console.log("painted" + painted);
+				}
+				else {
+					content[boxNumber-1] = "O";
+	        		$('#' + theBox).addClass("blue");
+				}
+
+				turn++;
+				painted[boxNumber-1] = true;
+				checkForWinners(content[boxNumber-1]);
+
+				if(turn==9) {
+					alert("The Game is over");
+				}
+			}
+			else {
+				alert("That Space is already filled");
+			}
+		}
+
+
+		function checkForWinners(symbol) {
+		    for(var a = 0; a < winningCombinations.length; a++) {
+			    if(content[winningCombinations[a][0]]==symbol&&content[winningCombinations[a][1]]== symbol&&content[winningCombinations[a][2]]==symbol) {
+			        alert(symbol+ " WON!");
+			    }
+		    }
+		}
+	</script>
+</head>
+<body>
+	<div id="board">
+		<div class="box" id="box1" onclick="boxClicked(1)"></div>
+		<div class="box" id="box2" onclick="boxClicked(2)"></div>
+		<div class="box" id="box3" onclick="boxClicked(3)"></div>
+		<div class="box" id="box4" onclick="boxClicked(4)"></div>
+		<div class="box" id="box5" onclick="boxClicked(5)"></div>
+		<div class="box" id="box6" onclick="boxClicked(6)"></div>
+		<div class="box" id="box7" onclick="boxClicked(7)"></div>
+		<div class="box" id="box8" onclick="boxClicked(8)"></div>
+		<div class="box" id="box9" onclick="boxClicked(9)"></div>
+	</div>
+</body>
+</html>
