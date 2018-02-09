@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tic Tac Toe Vs AI Hard</title>
+	<title>Tic Tac Toe Vs AI</title>
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -11,16 +11,19 @@
 	
 		var turn = 0;
 		var winningCombinations;
+		var possibleWins;
 		var painted;
 		var content;
 		var isWinner = false;
-		var randomNumber;
+		var possibleNumbersToChooseFrom = [];
 
 
 		$(document).ready(function(){
 		    painted = new Array();
 		    content = new Array();
+		    possibleWins = [];
 		    winningCombinations = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+		    // possibleWins = [true, true, true, true, true, true, true, true]
 
 		// Create board
 			for (var i = 0; i < 9; i++) {
@@ -33,17 +36,19 @@
 				    painted[l] = false;
 				    content[l]='';
 			    }
+			    for (var m = 0; m < 8; m++) {
+				    possibleWins[m] = true;
+			    }
 			}
 			createArrays();
 
 		// when box is clicked
 			$('.box').click(function(event) {
-				var boxPosition = $(".box").index(this);
-				// alert("That was div index #" + boxPosition);
-
+				var xChooses = $(".box").index(this);
+				// alert("That was div index #" + xChooses);
 				if(isWinner==false){
 					if(turn < 9) {
-						boxClicked(boxPosition);
+						boxClicked(xChooses);
 					}
 				}
 			});
@@ -58,8 +63,7 @@
 		});
 
 
-
-
+		// User's Turn
 		function boxClicked(boxNumber) {
 		    theBox = "box"+boxNumber;
 
@@ -72,13 +76,28 @@
         		$('#' + theBox).addClass("red");
 
 				checkForWinners("X");
-				if(isWinner==false){
 
+				// put this here because if user clicks an already filled box it count's as a turn and the AI fills a box.
+				if(isWinner==false){
 					if(turn==9) {
 						alert("The Game is over");
 					}
 					else {
-						hardAIThinking();
+						console.log("X chooses..." +boxNumber);
+						aiLookingToWin(boxNumber);
+						if (typeof possibleNumbersToChooseFrom !== 'undefined' && possibleNumbersToChooseFrom.length > 0) {
+    						// the array is defined and has at least one element
+
+							// write a function that passes in the xChooses
+							aiTurn(aiLookingToWin(boxNumber));
+						}
+						else {
+							var randomNumber = Math.floor(Math.random() * 9);
+							console.log("comp is choosing randomNumber " + randomNumber);
+							aiTurn(randomNumber);
+							
+						}
+
 					}
 				}
 
@@ -86,74 +105,56 @@
 			else {
 				alert("That Space is already filled");
 			}
+
 		}
 
-		function hardAIThinking() {
-
-// Need to figure out a way to loop throught all the winningCombinations, checking for close wins.
-// An alternative would be to first figure out the computer to try and win. possibly have computer have it's own possible winns array and try to finish one 
-
-
-			for (var b = 0; b < winningCombinations.length; b++) {
-				var possibleblocks = content[winningCombinations[b][0]] == "X" && content[winningCombinations[b][1]] == "X";
-				console.log(possibleblocks);
-				if (possibleblocks) {
-					var blockHere = winningCombinations[b][2];
+		// AI needs to look for when it's close to winning. 
+				// MAYBE:
+				// create an array of possible wins left (true/false)
+				// once X chooses a number change those possibilities to false
+				// have O choose a number out of the possible winning combinations.
+		function aiLookingToWin(userBoxPosition) {
+			for (var z = 0; z < 8; z++) {
+				if (winningCombinations[z][0] == userBoxPosition || winningCombinations[z][1] == userBoxPosition || winningCombinations[z][2] == userBoxPosition) {
+					possibleWins[z] = false;
 				}
 			}
 
-			if (possibleblocks) {
-				if (painted[blockHere] == false) {
-					aiTurn(blockHere);
-				}
-				else {
-					randomNumber = Math.floor(Math.random() * 8);
-					aiTurn(randomNumber)
+			// clear array of numbers that have a possible win
+			possibleNumbersToChooseFrom = [];
+			for (var y = 0; y < possibleWins.length; y++) {
+				if (possibleWins[y] == true) {
+					// console.log(winningCombinations[y]);
+					for (var x = 0; x <= 2; x++) {
+						possibleNumbersToChooseFrom.push(winningCombinations[y][x]);
+					}
 				}
 			}
-			// else if (content[winningCombinations[1][0]] == "X" && content[winningCombinations[1][2]] == "X") {
-			// 	if (painted[winningCombinations[1][1]] == false) {
-			// 		aiTurn(winningCombinations[1][1]);
-			// 	}
-			// 	else {
-			// 		randomNumber = Math.floor(Math.random() * 8);
-			// 		aiTurn(randomNumber)
-			// 	}
-			// }
-			// else if (content[winningCombinations[1][1]] == "X" && content[winningCombinations[1][2]] == "X") {
-			// 	if (painted[winningCombinations[1][0]] == false) {
-			// 		aiTurn(winningCombinations[1][0]);
-			// 	}
-			// 	else {
-			// 		randomNumber = Math.floor(Math.random() * 8);
-			// 		aiTurn(randomNumber)
-			// 	}
-			// }
-			else {
-				// random number between 0 and 8
-				randomNumber = Math.floor(Math.random() * 8);
-
-				aiTurn(randomNumber)
-			}
+			// loop through possible numbers and have AI choose one of those numbers
+			console.log("choose from" +possibleNumbersToChooseFrom);
 			
+			var random = Math.floor(Math.random() * possibleNumbersToChooseFrom.length);
+			var aiThoughtOutNumber = possibleNumbersToChooseFrom[random];
+			console.log("AI chooses " + aiThoughtOutNumber);
+			return aiThoughtOutNumber;
 		}
 
-		function aiTurn(compChosenNumber) {
-			console.log("randomNumber "+ randomNumber);
 
-			if (painted[compChosenNumber] == false) { // this condition tell us if the box is empty then...
+		function aiTurn(boxNumber) {
+
+			if (painted[boxNumber] == false) { // this condition tell us if the box is empty then...
 				turn++;
-				
-				content[compChosenNumber] = "O";
-				painted[compChosenNumber] = true;
-				$('#box' + compChosenNumber).addClass("blue");
+
+				content[boxNumber] = "O";
+				painted[boxNumber] = true;
+				$('#box' + boxNumber).addClass("blue");
 
 				checkForWinners("O");
 			}
 			else {
-				// alert("comp choose wrong");
-				randomNumber = Math.floor(Math.random() * 8);
-				aiTurn(randomNumber);
+				// but if the box has been filled that comp needs to choose another box to fill
+				console.log(boxNumber + "is already filled");
+				aiTurn(aiLookingToWin());
 			}
 		}
 
@@ -167,8 +168,6 @@
 		    }
 		}
 
-		// for Impossible AI, use similar logic to checkForWinners function, If 2 of the arguments are true than take the 3rd. 
-		// but as a computer you also want to try to win so look for possible wins.
 
 	</script>
 </head>
@@ -177,4 +176,18 @@
 	<div id="board"></div>
 	<button id="startover">Start Over</button>
 </body>
+
+
+
+<!-- Users Turn -->
+<!-- Box gets clicked that Nubmer is called xChooses -->
+<!-- after the users box is fille and marked, the AI's turn is started -->
+
+<!-- AI Turn -->
+<!-- xChooses -->
+
+
+
+
+
 </html>
