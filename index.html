@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tic Tac Toe</title>
+	<title>Tic Tac Toe Vs AI</title>
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -14,6 +14,7 @@
 		var painted;
 		var content;
 		var isWinner = false;
+		var randomNumber;
 
 
 		$(document).ready(function(){
@@ -41,12 +42,14 @@
 				// alert("That was div index #" + boxPosition);
 
 				if(isWinner==false){
-					boxClicked(boxPosition);
-					checkForWinners(content[boxPosition]);
+					if(turn < 9) {
+						boxClicked(boxPosition);
+					}
 				}
 			});
 
 			$("#startover").click(function() {
+				isWinner = false;
 				turn = 0;
 				createArrays();
 				$('.box').removeClass('red');
@@ -55,48 +58,66 @@
 		});
 
 
-
-
-// Everytime a box is clicked:
-	// check if the box clicked is already filled if so, ALERT USER else
-	// Mark box with correct symbol, log box has been filled and log users symbol
-	// check for any winners if so, ALERT USER AND END GAME, else do nothing.
+		// User's Turn
 		function boxClicked(boxNumber) {
-
 		    theBox = "box"+boxNumber;
 
 
 			if (painted[boxNumber] == false) { // this condition tell us if the box is empty then...
-				// who's turn is it
-	        	if(turn%2==0) { //first turn
-	        		content[boxNumber] = 'X';
-	        		$('#' + theBox).addClass("red");
-				}
-				else { //secont turn
-					content[boxNumber] = "O";
-	        		$('#' + theBox).addClass("blue");
+				turn++;
+
+				painted[boxNumber] = true;
+        		content[boxNumber] = 'X';
+        		$('#' + theBox).addClass("red");
+
+				checkForWinners("X");
+				if(isWinner==false){
+					if(turn==9) {
+						alert("The Game is over");
+					}
+					else {
+						aiTurn();
+					}
 				}
 
-				turn++;
-				painted[boxNumber] = true;
-				if(turn==9) {
-					alert("The Game is over");
-				}				
 			}
 			else {
 				alert("That Space is already filled");
+			}
+
+		}
+
+		function aiTurn() {
+			// random number between 0 and 8
+			randomNumber = Math.floor(Math.random() * 8);
+
+			if (painted[randomNumber] == false) { // this condition tell us if the box is empty then...
+				turn++;
+
+				content[randomNumber] = "O";
+				painted[randomNumber] = true;
+				$('#box' + randomNumber).addClass("blue");
+
+				checkForWinners("O");
+			}
+			else {
+				// but if the box has been filled that comp needs to choose another box to fill
+				aiTurn();
 			}
 		}
 
 
 		function checkForWinners(symbol) {
 		    for(var a = 0; a < winningCombinations.length; a++) {
-			    if(content[winningCombinations[a][0]]==symbol&&content[winningCombinations[a][1]]== symbol&&content[winningCombinations[a][2]]==symbol) {
+			    if(content[winningCombinations[a][0]]==symbol && content[winningCombinations[a][1]]== symbol && content[winningCombinations[a][2]]==symbol) {
 			        alert(symbol+ " WON!");
 			        isWinner = true;
 			    }
 		    }
 		}
+
+		// for Hard AI, use similar logic to checkForWinners function, If 2 of the arguments are true than take the 3rd. 
+		// but as a computer you also want to try to win so look for possible wins.
 
 	</script>
 </head>
