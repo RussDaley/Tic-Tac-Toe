@@ -32,3 +32,7 @@ V3
 	I'm leaving V3 as is, for a back up and reference file.
 	COMP DOESN'T DETECT A WINNER
 
+V3.1
+	Implimented the checkForWinners. Which I needed to create an if statement specific to the AI's turn.
+	Removed the turns counter. but also had to put another if stagement into the AI's turn...Maybe figure out a way to make things cleaner.
+	AI successfully blocks the user if there are two X in a row. AI first looks for possible instant wins if there are none then the AI will block the User. Also i found that if the AI had no possible wins It would straight away choose a random nubmer instead of first looking to block the User. So i put some logic there as well to first block the user but if no possible block exsit then choose a random number.

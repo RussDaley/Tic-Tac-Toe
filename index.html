@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tic Tac Toe V3</title>
+	<title>Tic Tac Toe V3.1</title>
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 
 	<script type="text/javascript">
-	
-		var turn = 0;
+
 		var winningCombinations;
 		var painted;
 		var content;
 		var isWinner = false;
-		var randomNumber = Math.floor(Math.random() * 9);
+		var winnerAlert = "";
 		var userChoosenBoxes = [];
 		var possibleCloseWins = [];
 		var possibleCloseWinNumbers = [];
@@ -45,50 +44,35 @@
 
 
 
-// when box is clicked by user
-$('.box').click(function(event) {
-	var userChoice = $(".box").index(this);
+			// when box is clicked by user
+			$('.box').click(function(event) {
+				var userChoice = $(".box").index(this);
 
-	if(isWinner == false) {
-
-
-
-		if(painted[userChoice] == false){
-
-			if(turn == 9) { //yes this does need to be repeated twice
-				alert('CAT, There is no winner');
-			}
-			else {
-				userTurn(userChoice);
-			}
-
-			if(turn == 9) { //yes this does need to be repeated twice
-				alert('CAT, There is no winner');
-			}
-			else {
-				aiTurn(aiChoice()); // AI's first turn is random, but since the var randomNumber will always only be one number and will never be redefined. On the AI's second turn the computer will see that the box is already filled and will run the aiTurn function with the parameter returned from the function aiChoice.
-			}
-		}
-		else {
-			alert('User needs to choose a differnet box');
-		}
-
-
-	}
-	else {
-		alert('There is a winner');
-	}
-
-});
-
-
+				if(isWinner == false) {
+					if(painted[userChoice] == false) {
+						if(painted.every(isboardFilled)) {
+							alert('CAT!');
+						}
+						else {
+							userTurn(userChoice);
+							aiTurn(aiChoice());
+						}
+					}
+					else {
+						alert('User needs to choose a differnet box');
+					}
+				}
+				else {
+					alert("The Game is Over: " + winnerAlert);
+				}
+			});
 
 
 			$("#startover").click(function() {
-				turn = 0;
 				createArrays();
 				$('.box').removeClass('red');
 				$('.box').removeClass('blue');
+				isWinner = false;
 			});
 		});
 
@@ -96,12 +80,34 @@ $('.box').click(function(event) {
 // AI needs to take it's turn, then think about it's next turn, THEREFORE two seperate functions.
 function aiChoice() {
 	if(possibleCloseWinNumbers == "") {
-		// No Numbers to Choose from
+		// If no Numbers to Choose from then choose a random number...but first check for any possibilities of User about to win.
+		// Blocks the User if they have 2 in a row
+		for(var h = 0; h < winningCombinations.length; h++) {
+			if(content[winningCombinations[h][0]]=="X") {
+				if(content[winningCombinations[h][1]]=="X") {
+					if(painted[winningCombinations[h][2]] == false) {
+						return winningCombinations[h][2];
+					}
+				}
+				else if(content[winningCombinations[h][2]]=="X") {
+					if(painted[winningCombinations[h][1]] == false) {
+						return winningCombinations[h][1];
+					}
+				}
+			}
+			else if(content[winningCombinations[h][1]]=="X") {
+				if(content[winningCombinations[h][2]]=="X") {
+					if(painted[winningCombinations[h][0]] == false) {
+						return winningCombinations[h][0];
+					}
+				}
+			}
+		}
 		return Math.floor(Math.random() * 9);
 	}
 	else {
-		// this is logic saying if AI has two in a row take the third and win!
 		for(var g = 0; g < winningCombinations.length; g++) {
+			// this is saying if AI has two in a row take the third and win!
 			if(content[winningCombinations[g][0]]=="O") {
 				if(content[winningCombinations[g][1]]=="O") {
 					// at this point AI has found a winning number but if the User chooses to block this box then AI Doesn't know what to do.
@@ -123,12 +129,43 @@ function aiChoice() {
 				}
 			}
 		}
+		// Blocks the User if they have 2 in a row
+		for(var h = 0; h < winningCombinations.length; h++) {
+			if(content[winningCombinations[h][0]]=="X") {
+				if(content[winningCombinations[h][1]]=="X") {
+					if(painted[winningCombinations[h][2]] == false) {
+						return winningCombinations[h][2];
+					}
+				}
+				else if(content[winningCombinations[h][2]]=="X") {
+					if(painted[winningCombinations[h][1]] == false) {
+						return winningCombinations[h][1];
+					}
+				}
+			}
+			else if(content[winningCombinations[h][1]]=="X") {
+				if(content[winningCombinations[h][2]]=="X") {
+					if(painted[winningCombinations[h][0]] == false) {
+						return winningCombinations[h][0];
+					}
+				}
+			}
+		}
 		return possibleCloseWinNumbers[Math.floor(Math.random() * possibleCloseWinNumbers.length)];
 	}
 }
 
 
+
+function isboardFilled(boxen) {
+	return boxen == true;
+}
+
 function aiThinking(lastChoosenBox) {
+	// AI successfully...
+		// creates an array of possibleCloseWins based off of the AI's past choices
+		// removes any that the User has blocked
+		// and then spits out a list of numbers chooses that would create a win for AI
 	for(var a = 0; a < winningCombinations.length; a++) {
 		if (winningCombinations[a][0] == lastChoosenBox || winningCombinations[a][1] == lastChoosenBox || winningCombinations[a][2] == lastChoosenBox) {
 			possibleCloseWins[a] = true;
@@ -152,11 +189,6 @@ function aiThinking(lastChoosenBox) {
 			}
 		}
 	}
-	// console.log("possibleCloseWinNumbers "+possibleCloseWinNumbers);
-	// AI successfully...
-		// creates an array of possibleCloseWins based off of the AI's past choices
-		// removes any that the User has blocked
-		// and then spits out a list of numbers chooses that would create a win for AI
 }
 
 
@@ -167,31 +199,37 @@ function userTurn(box) {
     content[box] = "X";
 	userChoosenBoxes.push(box);
 	aiThinking(aiLastChoice);
-	turn++;
+	checkForWinners("X");
 }
 
 function aiTurn(box) {
-	if(painted[box] == false) {
-	    $('#' + box).addClass("blue");
-		painted[box] = true;
-    	content[box] = "O";
-		turn++;
-		aiLastChoice = box;
-	}
-	else {
-		aiTurn(aiChoice());
+	if(isWinner == false) { // Need to check for winners before allowing AI to take it's turn.
+		if(painted.every(isboardFilled)) { // also need to check before AI goes if the board is filled.
+			alert('CAT!');
+		}
+		else {
+			if(painted[box] == false) {
+			    $('#' + box).addClass("blue");
+				painted[box] = true;
+		    	content[box] = "O";
+		    	checkForWinners("O");
+				aiLastChoice = box;
+			}
+			else {
+				aiTurn(aiChoice());
+			}
+		}
 	}
 }
-
-
 
 
 
 function checkForWinners(symbol) {
     for(var a = 0; a < winningCombinations.length; a++) {
 	    if(content[winningCombinations[a][0]]==symbol&&content[winningCombinations[a][1]]== symbol&&content[winningCombinations[a][2]]==symbol) {
-	        alert(symbol+ " WON!");
 	        isWinner = true;
+	        alert(symbol + " is the Winner!");
+	        winnerAlert = symbol + " has won!";
 	    }
     }
 }
