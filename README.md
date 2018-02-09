@@ -17,3 +17,18 @@ v2.2
 OVERALL v2 has messy code, Creating v3....
 
 ///--------------------------------------------V3---------------------------------------------///
+I need to create a click function that has the complicated logic deciding which final number the AI is will be choosing But multiple functions that are simple. ie. the turns function shouldn't have the logic in it
+
+V3
+	Decided to make this version very specific, such as the User will always start. One thing I have run into is trying to determine when the board is completely filled. for now I'm using a turns count, I would like to find a better way to do this. need to start on creating the logic for the AI choice.
+	For the AI to choose a good box number i need to factor in:
+		1.What the AI has already choosen.
+		2.What the user chooses.
+		3.If at any time AI has 2 boxes in a row that are already filled to take the 3rd and win.
+	SUCCESS!! AI Thinks throught the above 3 factors, as so:
+		1.The first box AI chooses is at random, but after that it thinks through combinations that would equal a win, and chooses from that list.
+		2.When the User takes a number the AI will mark combinations that are no longer possible to win with.
+		3.AI will win(on purpose, not at random) AND wont be a poor sport(like in V2.2) if User blocks AI's win.
+	I'm leaving V3 as is, for a back up and reference file.
+	COMP DOESN'T DETECT A WINNER
+
