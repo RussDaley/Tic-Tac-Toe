@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tic Tac Toe Vs AI</title>
+	<title>Tic Tac Toe Vs AI Hard</title>
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -58,7 +58,8 @@
 		});
 
 
-		// User's Turn
+
+
 		function boxClicked(boxNumber) {
 		    theBox = "box"+boxNumber;
 
@@ -72,11 +73,12 @@
 
 				checkForWinners("X");
 				if(isWinner==false){
+
 					if(turn==9) {
 						alert("The Game is over");
 					}
 					else {
-						aiTurn();
+						hardAIThinking();
 					}
 				}
 
@@ -84,25 +86,74 @@
 			else {
 				alert("That Space is already filled");
 			}
-
 		}
 
-		function aiTurn() {
-			// random number between 0 and 8
-			randomNumber = Math.floor(Math.random() * 8);
+		function hardAIThinking() {
 
-			if (painted[randomNumber] == false) { // this condition tell us if the box is empty then...
+// Need to figure out a way to loop throught all the winningCombinations, checking for close wins.
+// An alternative would be to first figure out the computer to try and win. possibly have computer have it's own possible winns array and try to finish one 
+
+
+			for (var b = 0; b < winningCombinations.length; b++) {
+				var possibleblocks = content[winningCombinations[b][0]] == "X" && content[winningCombinations[b][1]] == "X";
+				console.log(possibleblocks);
+				if (possibleblocks) {
+					var blockHere = winningCombinations[b][2];
+				}
+			}
+
+			if (possibleblocks) {
+				if (painted[blockHere] == false) {
+					aiTurn(blockHere);
+				}
+				else {
+					randomNumber = Math.floor(Math.random() * 8);
+					aiTurn(randomNumber)
+				}
+			}
+			// else if (content[winningCombinations[1][0]] == "X" && content[winningCombinations[1][2]] == "X") {
+			// 	if (painted[winningCombinations[1][1]] == false) {
+			// 		aiTurn(winningCombinations[1][1]);
+			// 	}
+			// 	else {
+			// 		randomNumber = Math.floor(Math.random() * 8);
+			// 		aiTurn(randomNumber)
+			// 	}
+			// }
+			// else if (content[winningCombinations[1][1]] == "X" && content[winningCombinations[1][2]] == "X") {
+			// 	if (painted[winningCombinations[1][0]] == false) {
+			// 		aiTurn(winningCombinations[1][0]);
+			// 	}
+			// 	else {
+			// 		randomNumber = Math.floor(Math.random() * 8);
+			// 		aiTurn(randomNumber)
+			// 	}
+			// }
+			else {
+				// random number between 0 and 8
+				randomNumber = Math.floor(Math.random() * 8);
+
+				aiTurn(randomNumber)
+			}
+			
+		}
+
+		function aiTurn(compChosenNumber) {
+			console.log("randomNumber "+ randomNumber);
+
+			if (painted[compChosenNumber] == false) { // this condition tell us if the box is empty then...
 				turn++;
-
-				content[randomNumber] = "O";
-				painted[randomNumber] = true;
-				$('#box' + randomNumber).addClass("blue");
+				
+				content[compChosenNumber] = "O";
+				painted[compChosenNumber] = true;
+				$('#box' + compChosenNumber).addClass("blue");
 
 				checkForWinners("O");
 			}
 			else {
-				// but if the box has been filled that comp needs to choose another box to fill
-				aiTurn();
+				// alert("comp choose wrong");
+				randomNumber = Math.floor(Math.random() * 8);
+				aiTurn(randomNumber);
 			}
 		}
 
@@ -116,7 +167,7 @@
 		    }
 		}
 
-		// for Hard AI, use similar logic to checkForWinners function, If 2 of the arguments are true than take the 3rd. 
+		// for Impossible AI, use similar logic to checkForWinners function, If 2 of the arguments are true than take the 3rd. 
 		// but as a computer you also want to try to win so look for possible wins.
 
 	</script>
