@@ -1,7 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Tic Tac Toe V3.1</title>
+	<!-- Required meta tags for bootstrap -->
+	<meta charset="utf-8">
+		<!-- To ensure proper rendering and touch zooming for mobile -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Tic Tac Toe V4</title>
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -18,6 +28,8 @@
 		var possibleCloseWins = [];
 		var possibleCloseWinNumbers = [];
 		var aiLastChoice;
+		var userWinCount = 0;
+		var aiWinCount = 0;
 
 
 		$(document).ready(function(){
@@ -27,7 +39,7 @@
 
 		// Create board
 			for (var i = 0; i < 9; i++) {
-				$('#board').append('<div class="box" id="' + i +'"></div>');
+				$('#board').append('<div class="box col-4" id="' + i +'"></div>');
 			}
 
 		// create arrays with empty values
@@ -43,7 +55,6 @@
 			createArrays();
 
 
-
 			// when box is clicked by user
 			$('.box').click(function(event) {
 				var userChoice = $(".box").index(this);
@@ -51,7 +62,7 @@
 				if(isWinner == false) {
 					if(painted[userChoice] == false) {
 						if(painted.every(isboardFilled)) {
-							alert('CAT!');
+							$("#alertBox").html('CAT!');
 						}
 						else {
 							userTurn(userChoice);
@@ -63,16 +74,17 @@
 					}
 				}
 				else {
-					alert("The Game is Over: " + winnerAlert);
+					$("#alertBox").html("The Game is Over: " + winnerAlert);
 				}
 			});
 
 
-			$("#startover").click(function() {
+			$(".startover").click(function() {
 				createArrays();
 				$('.box').removeClass('red');
 				$('.box').removeClass('blue');
 				isWinner = false;
+				$("#alertBox").html(":)");
 			});
 		});
 
@@ -184,7 +196,6 @@ function aiThinking(lastChoosenBox) {
 	for(var e = 0; e < possibleCloseWins.length; e++) {
 		if(possibleCloseWins[e] == true) {
 			for(var f = 0; f < winningCombinations[e].length; f++) {
-
 				possibleCloseWinNumbers.push(winningCombinations[e][f]);
 			}
 		}
@@ -197,19 +208,19 @@ function userTurn(box) {
     $('#' + box).addClass("red");
     painted[box] = true;
     content[box] = "X";
-	userChoosenBoxes.push(box);
-	aiThinking(aiLastChoice);
-	checkForWinners("X");
+		userChoosenBoxes.push(box);
+		aiThinking(aiLastChoice);
+		checkForWinners("X");
 }
 
 function aiTurn(box) {
 	if(isWinner == false) { // Need to check for winners before allowing AI to take it's turn.
 		if(painted.every(isboardFilled)) { // also need to check before AI goes if the board is filled.
-			alert('CAT!');
+			$("#alertBox").html('CAT!');
 		}
 		else {
 			if(painted[box] == false) {
-			    $('#' + box).addClass("blue");
+				$('#' + box).addClass("blue");
 				painted[box] = true;
 		    	content[box] = "O";
 		    	checkForWinners("O");
@@ -228,8 +239,18 @@ function checkForWinners(symbol) {
     for(var a = 0; a < winningCombinations.length; a++) {
 	    if(content[winningCombinations[a][0]]==symbol&&content[winningCombinations[a][1]]== symbol&&content[winningCombinations[a][2]]==symbol) {
 	        isWinner = true;
-	        alert(symbol + " is the Winner!");
+			  $("#alertBox").html(symbol + " is the Winner!");
 	        winnerAlert = symbol + " has won!";
+
+					// Win Counter
+					if(symbol == "O") {
+						aiWinCount++;
+						$("#aiWinCount").html(aiWinCount);
+					}
+					else if(symbol == "X") {
+						userWinCount++;
+						$("#userWinCount").html(userWinCount);
+					}
 	    }
     }
 }
@@ -239,8 +260,28 @@ function checkForWinners(symbol) {
 	</script>
 </head>
 <body>
-	<h1>Tic Tac Toe</h1>
-	<div id="board"></div>
-	<button id="startover">Start Over</button>
+	<div class="container">
+		<h1 class="mainTitle col-sm-12">Tic Tac Toe</h1>
+		<div class="row">
+			<div class="col-md-6 col-sm-12">
+				<table class="winCounts col-lg-8 offset-lg-2 col-md-10 offset-md-1">
+					<tr>
+						<td>User Wins</td>
+						<td>AI Wins</td>
+					</tr>
+					<tr>
+						<td id="userWinCount">-</td>
+						<td id="aiWinCount">-</td>
+					</tr>
+				</table>
+				<div id="alertBox">Alert Box</div>
+				<button class="startover col-sm-6 offset-sm-3 hidden-sm-down">Start Over</button>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<div id="board"></div>
+				<button class="startover col-sm-6 offset-sm-3 hidden-md-up">Start Over</button>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -36,3 +36,17 @@ V3.1
 	Implimented the checkForWinners. Which I needed to create an if statement specific to the AI's turn.
 	Removed the turns counter. but also had to put another if stagement into the AI's turn...Maybe figure out a way to make things cleaner.
 	AI successfully blocks the user if there are two X in a row. AI first looks for possible instant wins if there are none then the AI will block the User. Also i found that if the AI had no possible wins It would straight away choose a random nubmer instead of first looking to block the User. So i put some logic there as well to first block the user but if no possible block exsit then choose a random number.
+
+
+
+
+IDEAS instead of making the first box AI chooses random...make it straght away block the user.(Impossible Version.)
+	Delay AI
+	Alternate turns
+
+///--------------------------------------------V4---------------------------------------------///
+This will be the appealing UI
+
+V4
+	Functionality is based off of V3.1
+	For some reason the Startover button is making the AI loose it's thought process. after the startover button is click the AI wont block the User. (After testing it more i cant seem to see where the AI is making a wrong move. Maybe it's working just fine)
